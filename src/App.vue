@@ -174,6 +174,28 @@ onMounted(() => {
     margin-top:20px;
     flex-direction: column;
   }
+
+
+  @media (max-width:1024px) {
+    .wrapper {
+      width: 90%;
+      padding:40px ;
+    }
+  }
+  @media (max-width:500px) {
+    .add-task-container {
+      flex-direction: column;
+      height: 150px;
+      gap:10px;
+    }
+    #add-task-input {
+      width: 100%;
+    }
+    #add-task-button {
+      width: 100%;
+    }
+  }
+
 </style>
 
 
