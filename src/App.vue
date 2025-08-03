@@ -179,10 +179,13 @@ onMounted(() => {
   @media (max-width:1024px) {
     .wrapper {
       width: 90%;
-      padding:40px ;
+      padding:40px;
     }
   }
   @media (max-width:500px) {
+    .wrapper {
+      padding: 0;
+    }
     .add-task-container {
       flex-direction: column;
       height: 150px;
