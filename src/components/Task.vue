@@ -1,45 +1,97 @@
 <template>
-    <div class="task-wrapper">
-        <input type="checkbox">
-        <p>{{ text }}</p>
-        <img class="cross" src="../assets/cross.png" alt="" @click ="DeleteTask">
+  <div class="task-card" 
+     :style="{ 
+       border: `2px solid ${color}`, 
+       boxShadow: `0 2px 6px ${color}33` /* 33 = ~20% прозрачности */
+     }">
+    <!-- декоративная полоска слева -->
+    <div class="task-decor" :style="{ backgroundColor: color }"></div>
+
+    <div class="task-content">
+      <header>
+        <h3 >{{ title }}</h3>
+        <div class="buttons">
+          <button @click="$emit('editTask', id)"><img src="@/components/assets/edit.svg" alt=""></button>
+          <button id="delete-task-button" @click="useCurrentTasks().deleteTask(id)"><img src="@/components/assets/delete.svg" alt=""></button>
+        </div>
+      </header>
+
+      <p v-if="description">{{ description }} </p>
     </div>
+  </div>
 </template>
 
+<script setup lang="ts">
+import { useCurrentTasks } from '@/app/stores/TasksStore';
 
-<script setup>
-const props = defineProps(['text',"id"])
-const emit = defineEmits(['Delete'])
-function DeleteTask () {
-    emit('Delete',props.id)
-}
+const props = defineProps<{
+  id: number
+  title: string
+  description?: string
+  color?: string   
+}>()
+
 
 </script>
 
 <style scoped>
-    .task-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap:20px;
-        position: relative;
-        background-color: #F9F9F9;
-        height: 50px;
-        padding: 10px;
-    }
+.task-card {
+  display: flex;
+  align-items: stretch;
+  background: #fff;
+  border-radius: 12px;
+ 
+  overflow: hidden; /* чтобы decor выглядел аккуратно */
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
 
-    img {
-        height: 70%;
-        position: absolute;
-        right:10px;
-    }
-    img:hover {cursor: pointer;}
-    p {
-        font-size: 20px;
-    }
-    input {
-        background-color: transparent;
-        width: 20px;
-        height: 20px;
-    }
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+/* левая цветная полоска */
+.task-decor {
+  width: 8px;
+  flex-shrink: 0;
+}
+
+.task-content {
+  flex: 1;
+  padding: 20px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h3 {
+  font-size: 25px;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+.buttons {
+  display: flex;
+  gap:20px;
+  align-items: center;
+}
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+#delete-task-button:hover {
+  filter: brightness(0) saturate(100%) invert(19%) sepia(74%) saturate(6315%) hue-rotate(355deg) brightness(97%) contrast(120%);
+}
+
+p {
+  max-width: 90%;
+  font-size: 14px;
+  color: #555;
+  margin-top: 8px;
+}
 </style>
