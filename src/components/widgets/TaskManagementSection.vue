@@ -5,9 +5,15 @@
       <AddTaskButton @click = 'ToggleAddTaskForm()'/>
     </header>
 
-    <AddTaskForm 
+    <AddTaskForm
       :isOpen="isOpen"
-      @close="ToggleAddTaskForm(null)" 
+      @close="ToggleAddTaskForm(null)"
+      :title="editingTask?.title || ''"
+      :description="editingTask?.description || ''"
+      :action="editingTask ? 'Редактировать' : 'Создать'"
+      :color="editingTask?.color || '#3498db'"
+     :id="editingTask?.id ?? null"
+
     />
 
     <div class="task-display-wrapper">
@@ -35,7 +41,7 @@ import { useCurrentTasks } from '../../app/stores/TasksStore'
 let taskArray = useCurrentTasks()
 let isOpen = ref(false)
 // Добавьте ref для хранения редактируемой задачи
-const editingTask = ref(null);
+const editingTask = ref({});
 
 function ToggleAddTaskForm(id = null) {
   if (id !== null) {
@@ -46,7 +52,6 @@ function ToggleAddTaskForm(id = null) {
       editingTask.value = task; // Сохраняем задачу
     }
   } else {
-    console.log("Создание новой задачи");
     editingTask.value = null; // Сбрасываем
   }
   

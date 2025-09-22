@@ -2,7 +2,7 @@
   <div v-show="isOpen" class="modal-overlay">
     <div class="modal-content">
       <h2>Новая задача</h2>
-      <form @submit.prevent="addTask">
+      <form @submit.prevent="handleSubmit">
         <input
           v-model="title"
           type="text"
@@ -21,7 +21,7 @@
         </label>
 
         <div class="modal-actions">
-          <button type="submit">Добавить</button>
+          <button type="submit">{{ action }}</button>
           <button type="button" @click="close">Отмена</button>
         </div>
       </form>
@@ -30,51 +30,87 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { handleError, onMounted, ref, watch } from 'vue'
 import { useCurrentTasks } from '@/app/stores/TasksStore'
 
-const props = defineProps<{ isOpen: boolean }>()
+const props = defineProps<{
+  isOpen: boolean
+  title: string
+  description: string
+  color: string,
+  action:string,
+  id:number|string
+}>()
+
 const emit = defineEmits<{ (e: 'close'): void }>()
-let inputs: NodeListOf<HTMLInputElement | HTMLTextAreaElement>
 const store = useCurrentTasks()
 
 const title = ref('')
 const description = ref('')
 const color = ref('#3498db')
 
-function close() {emit('close')}
+// Когда пропсы меняются (например, при выборе задачи для редактирования) —
+// обновляем локальные значения
+watch(
+  () => [props.title, props.description, props.color],
+  ([newTitle, newDesc, newColor]) => {
+    title.value = newTitle
+    description.value = newDesc
+    color.value = newColor
+  },
+  { immediate: true }
+)
+
+function close() {
+  emit('close')
+}
 
 function addTask() {
   store.addTask({
-    id:Date.now() + Math.floor(Math.random() * 1000),
-    title:title.value,
+    id: Date.now() + Math.floor(Math.random() * 1000),
+    title: title.value,
     description: description.value,
-    color:color.value,
+    color: color.value,
   })
 
-  inputs.forEach(input=>{input.style.height='auto'})
   title.value = ''
   description.value = ''
   color.value = '#3498db'
   close()
 }
 
+function editTask(){
+  store.editTask({
+  id: Number(props.id),
+  title: title.value,
+  description: description.value,
+  color: color.value,
+}, Number(props.id))
+close()
+}
 
-onMounted(()=>{
-  inputs = document.querySelectorAll('input, textarea');
+function handleSubmit() {
+  if (props.action === 'Создать') {
+    addTask()
+  } else if (props.action === 'Редактировать') {
+    editTask()
+  }
+}
+
+
+// авто-ресайз для textarea
+onMounted(() => {
+  const inputs = document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea')
   inputs.forEach(input => {
-    input.addEventListener('input', (event) => {
-      const target = event.target as HTMLInputElement | HTMLTextAreaElement; // приведение типа
-
-      // Авто-ресайз для textarea
+    input.addEventListener('input', e => {
+      const target = e.target as HTMLTextAreaElement
       if (target.tagName.toLowerCase() === 'textarea') {
-        target.style.height = 'auto';
-        target.style.height = target.scrollHeight + 2 + 'px';
+        target.style.height = 'auto'
+        target.style.height = target.scrollHeight + 2 + 'px'
       }
-    });
-  });
+    })
+  })
 })
-
 </script>
 
 <style scoped>
