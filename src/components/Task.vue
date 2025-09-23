@@ -15,6 +15,14 @@
           <button id="delete-task-button" @click="useCurrentTasks().deleteTask(id)"><img src="@/components/assets/delete.svg" alt=""></button>
         </div>
       </header>
+      <div class="category-container">
+          <Category
+          v-for="category in categories.Categories"
+          :key="category.id"
+          :title="category.title"
+          :color="category.color"
+        />
+      </div>
 
       <p v-if="description">{{ description }} </p>
     </div>
@@ -23,6 +31,8 @@
 
 <script setup lang="ts">
 import { useCurrentTasks } from '@/app/stores/TasksStore';
+import Category from './UI kit/Category.vue';
+import { useCategory } from '@/app/stores/CategoryStore';
 
 const props = defineProps<{
   id: number
@@ -31,6 +41,7 @@ const props = defineProps<{
   color?: string   
 }>()
 
+const categories = useCategory()
 
 </script>
 
@@ -40,7 +51,7 @@ const props = defineProps<{
   align-items: stretch;
   background: #fff;
   border-radius: 12px;
- 
+  width: 30%;
   overflow: hidden; /* чтобы decor выглядел аккуратно */
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -57,9 +68,13 @@ const props = defineProps<{
 }
 
 .task-content {
+  display: flex;
+  flex-direction: column;
+  gap:20px;
   flex: 1;
   padding: 20px;
 }
+
 
 header {
   display: flex;
@@ -73,6 +88,13 @@ h3 {
   margin: 0;
   color: #333;
 }
+
+.category-container{
+  display: flex;
+  gap:10px;
+  flex-wrap: wrap;
+}
+
 .buttons {
   display: flex;
   gap:20px;

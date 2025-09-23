@@ -37,6 +37,5 @@ $hover-color: #2980b9;
 }
 .router-content{
 flex:1;
-padding: 0 100px;
 }
 </style>

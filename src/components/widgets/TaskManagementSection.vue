@@ -32,23 +32,22 @@
 </template>
 
 <script setup>
-import AddTaskButton from '../buttons/AddTaskButton.vue'
+import AddTaskButton from '@/components/UI kit/AddTaskButton.vue'
 import Task from '../Task.vue'
-import AddTaskForm from '../forms/AddTaskForm.vue'
+import AddTaskForm from '@/components/UI kit/AddTaskForm.vue'
 import { onMounted, ref } from 'vue'
 import { useCurrentTasks } from '../../app/stores/TasksStore'
 
 let taskArray = useCurrentTasks()
 let isOpen = ref(false)
 // Добавьте ref для хранения редактируемой задачи
-const editingTask = ref({});
+const editingTask = ref(null);
 
 function ToggleAddTaskForm(id = null) {
   if (id !== null) {
-    console.log("Редактирование задачи с ID:", id);
+    
     const task = taskArray.tasks.find(task => task.id === id);
     if (task) {
-      console.log("Найдена задача:", task);
       editingTask.value = task; // Сохраняем задачу
     }
   } else {
@@ -78,16 +77,15 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 40px;
-  width: 60%;
-  
-  border-right: 1px black solid;
+ border-right: 1px black solid;
   margin-top:50px;
   padding: 0 90px;
   box-sizing: border-box; /* Чтобы padding учитывался в ширине */
 }
 .task-display-wrapper {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-between;
   gap:30px;
   
 }
